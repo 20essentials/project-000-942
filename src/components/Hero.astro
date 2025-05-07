@@ -1,0 +1,80 @@
+---
+import { getI18n } from '@/i18n/getI18n';
+import SelectLanguage from './SelectLanguage.astro';
+
+const lang = Astro.currentLocale;
+const I18N = getI18n({ lang });
+const { h1Title } = I18N;
+---
+
+<section>
+  <video id='myVideo' src='/assets/video.mp4' autoplay muted></video>
+  <h1>{h1Title}</h1>
+  <SelectLanguage />
+</section>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const video = document.getElementById('myVideo') as HTMLVideoElement;
+    if (!video) return;
+    video.addEventListener('playing', () => {
+      setTimeout(() => {
+        video.pause();
+        video.remove();
+      }, 2200);
+    });
+  });
+</script>
+
+<style>
+  section {
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    flex-wrap: wrap;
+    place-content: center;
+    overflow: hidden;
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 17.5%;
+      width: 100%;
+      height: 100%;
+      object-fit: cove;
+      pointer-events: none;
+      z-index: 10;
+      mix-blend-mode: screen;
+    }
+  }
+
+  h1 {
+    position: relative;
+    font-size: 5vmax;
+    text-align: center;
+    color: transparent;
+    overflow: hidden;
+    color: #ffeb3b;
+    padding-inline: 0.3vmax;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -20%;
+      width: 120%;
+      height: 100%;
+      background-image: linear-gradient(90deg, transparent, #000 5%, #000 100%);
+      animation: animar 2.2s linear both;
+    }
+  }
+
+  @keyframes animar {
+    0% {
+      left: -20%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+</style>

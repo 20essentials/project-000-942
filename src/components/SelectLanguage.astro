@@ -1,0 +1,156 @@
+---
+import { LANG } from '@/i18n/getI18n';
+const allLanguages = Object.entries(LANG);
+const url = Astro.url.pathname;
+const [, languageActive] = url.split('/');
+const currentLanguageText =
+  allLanguages.find(([langText, lang]) => lang === languageActive)[0] ?? '';
+---
+
+<div class='custom-select-wrapper'>
+  <div class='custom-select'>
+    <div class='custom-select-trigger'>
+      <img src={`/assets/${languageActive}.svg`} alt='Flag' class='flag' />
+      <span>{currentLanguageText}</span>
+    </div>
+    <div class='custom-options'>
+      {
+        allLanguages.map(([langText, lang]) => {
+          const isSelectedClass = lang === languageActive ? 'selected' : '';
+          return (
+            <a
+              href={`/${lang}`}
+              class={`custom-option option-en ${isSelectedClass}`}
+              data-value={lang}
+            >
+              <img src={`/assets/${lang}.svg`} alt={langText} class='flag' />{' '}
+              {langText}
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-select-wrapper {
+    position: absolute;
+    top: 3vmax;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12vmax;
+    font-size: 1vmax;
+  }
+
+  .custom-select {
+    position: relative;
+    user-select: none;
+  }
+
+  .custom-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 0.5vmax;
+    border: 0.1vmax solid #aaa;
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+
+  .custom-select .flag {
+    width: 1.5vmax;
+    height: auto;
+    margin-right: 0.5vmax;
+  }
+
+  .custom-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    border: 0.1vmax solid #ccc;
+  }
+
+  .custom-option {
+    padding: 0.5vmax;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: black;
+    gap: 0.5vmax;
+    text-transform: capitalize;
+    text-decoration: none;
+  }
+
+  .custom-option img {
+    width: 1vmax;
+    height: auto;
+  }
+
+  .custom-option:hover,
+  .custom-option.selected {
+    outline: 0.03vmax solid #888;
+  }
+
+  /* Gradientes por idioma */
+  .option-en {
+    background: linear-gradient(to right, #1e90ff, #ff4b5c); /* azul-rojo */
+  }
+
+  .option-es {
+    background: linear-gradient(
+      to right,
+      #aa151b,
+      #f1bf00,
+      #aa151b
+    ); /* bandera España */
+  }
+
+  .option-it {
+    background: linear-gradient(
+      to right,
+      #008c45,
+      #ffffff,
+      #cd212a
+    ); /* bandera Italia */
+  }
+</style>
+
+<script is:inline>
+  const selectTrigger = document.querySelector('.custom-select-trigger');
+  const optionsContainer = document.querySelector('.custom-options');
+  const options = document.querySelectorAll('.custom-option');
+
+  selectTrigger.addEventListener('click', () => {
+    optionsContainer.style.display =
+      optionsContainer.style.display === 'block' ? 'none' : 'block';
+  });
+
+  options.forEach(option => {
+    option.addEventListener('click', () => {
+      // Update visual
+      document
+        .querySelector('.custom-option.selected')
+        ?.classList.remove('selected');
+      option.classList.add('selected');
+      selectTrigger.innerHTML = option.innerHTML;
+
+      // Hide options
+      optionsContainer.style.display = 'none';
+
+      // Do something with the value
+      const selectedValue = option.getAttribute('data-value');
+    });
+  });
+
+  // Close dropdown if clicked outside
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.custom-select')) {
+      optionsContainer.style.display = 'none';
+    }
+  });
+</script>
